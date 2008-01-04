@@ -2,7 +2,7 @@
 %define plugin	channelscan
 %define name	vdr-plugin-%plugin
 %define version	0.1.0
-%define rel	11
+%define rel	12
 
 Summary:	VDR plugin: Plugin for satellite scan
 Name:		%name
