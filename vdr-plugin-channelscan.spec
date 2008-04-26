@@ -2,7 +2,7 @@
 %define plugin	channelscan
 %define name	vdr-plugin-%plugin
 %define version	0.1.0
-%define rel	12
+%define rel	13
 
 Summary:	VDR plugin: Plugin for satellite scan
 Name:		%name
@@ -13,8 +13,10 @@ License:	GPL
 URL:		http://kikko77.altervista.org/
 Source:		vdr-%plugin-%version.tar.bz2
 Patch1:		channelscan-extra-qualification.patch
+Patch2:		90_channelscan-0.1.0-1.5.10.dpatch
+Patch3:		channelscan-0.1.0-i18n-1.6.patch
 BuildRoot:	%{_tmppath}/%{name}-buildroot
-BuildRequires:	vdr-devel >= 1.4.1-6
+BuildRequires:	vdr-devel >= 1.6.0
 Requires:	vdr-abi = %vdr_abi
 
 %description
@@ -24,6 +26,10 @@ from a .ini file and then scan this sat to get a channel list.
 %prep
 %setup -q -n %plugin-%version
 %patch1 -p0 -b .extra
+%patch2 -p1
+%patch3 -p1
+
+%vdr_plugin_prep
 
 %build
 %vdr_plugin_build
