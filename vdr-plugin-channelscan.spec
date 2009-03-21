@@ -15,6 +15,8 @@ Source:		vdr-%plugin-%version.tar.bz2
 Patch1:		channelscan-extra-qualification.patch
 Patch2:		90_channelscan-0.1.0-1.5.10.dpatch
 Patch3:		channelscan-0.1.0-i18n-1.6.patch
+Patch4:		channelscan-format-string.patch
+Patch5:		channelscan-includes.patch
 BuildRoot:	%{_tmppath}/%{name}-buildroot
 BuildRequires:	vdr-devel >= 1.6.0
 Requires:	vdr-abi = %vdr_abi
@@ -28,6 +30,8 @@ from a .ini file and then scan this sat to get a channel list.
 %patch1 -p0 -b .extra
 %patch2 -p1
 %patch3 -p1
+%patch4 -p1
+%patch5 -p1
 
 %vdr_plugin_prep
 
