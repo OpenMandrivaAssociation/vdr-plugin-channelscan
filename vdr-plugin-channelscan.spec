@@ -2,7 +2,7 @@
 %define plugin	channelscan
 %define name	vdr-plugin-%plugin
 %define version	0.1.0
-%define rel	16
+%define rel	17
 
 Summary:	VDR plugin: Plugin for satellite scan
 Name:		%name
@@ -17,6 +17,8 @@ Patch2:		90_channelscan-0.1.0-1.5.10.dpatch
 Patch3:		channelscan-0.1.0-i18n-1.6.patch
 Patch4:		channelscan-format-string.patch
 Patch5:		channelscan-includes.patch
+# warning: cannot pass objects of non-POD type ‘class cString’ through ‘...’; call will abort at runtime
+Patch6:		channelscan-non-pod-type.patch
 BuildRoot:	%{_tmppath}/%{name}-buildroot
 BuildRequires:	vdr-devel >= 1.6.0
 Requires:	vdr-abi = %vdr_abi
@@ -32,6 +34,7 @@ from a .ini file and then scan this sat to get a channel list.
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
+%patch6 -p1
 
 %vdr_plugin_prep
 
