@@ -1,0 +1,22 @@
+Index: channelscan-0.1.0/channelscan.c
+===================================================================
+--- channelscan-0.1.0/channelscan.c
++++ channelscan-0.1.0/channelscan.c	2009-07-28 21:59:07.468093058 +0300
+@@ -441,7 +441,7 @@
+ 		// Frequency
+ 		sprintf(cTemp, tr("Frequency:"));
+ 		osd->DrawText(10,iTop,cTemp,clrWhite,clrBackwindow,cFont::GetFont(fontOsd));
+-		sprintf(cTemp, "%s", itoa(Frequenz));
++		sprintf(cTemp, "%s", (const char *) itoa(Frequenz));
+ 		osd->DrawText(130,iTop,cTemp,clrWhite,clrBackwindow,cFont::GetFont(fontOsd));
+ 		// Polari
+ 		sprintf(cTemp, tr("Polarization:"));
+@@ -451,7 +451,7 @@
+ 		// Symbolrate
+ 		sprintf(cTemp, tr("Symbolrate:"));
+ 		osd->DrawText(410,iTop,cTemp,clrWhite,clrBackwindow,cFont::GetFont(fontOsd));		
+-		sprintf(cTemp, "%s", itoa(Symbolrate));
++		sprintf(cTemp, "%s", (const char *) itoa(Symbolrate));
+ 		osd->DrawText(540,iTop,cTemp,clrWhite,clrBackwindow,cFont::GetFont(fontOsd));		
+         osd->Flush();
+ 	} else {

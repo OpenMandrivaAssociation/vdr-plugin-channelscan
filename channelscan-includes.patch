@@ -1,0 +1,10 @@
+Index: channelscan-0.1.0/transponders.c
+===================================================================
+--- channelscan-0.1.0/transponders.c
++++ channelscan-0.1.0/transponders.c	2009-03-21 10:26:38.000000000 +0200
+@@ -1,3 +1,5 @@
++#include <string.h>
++#include <stdlib.h>
+ #include "transponders.h"
+ 
+ string cTranspoders::StrTrim(string sInput) {

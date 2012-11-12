@@ -1,0 +1,772 @@
+
+This is a semi-automatically created i18n adaptation patch and may contain
+errors (such as missing translations). This should only be used as a
+temporary measure until the upstream plugin maintainer fixes the plugin
+properly according to the instructions in i18n-to-gettext.pl.
+
+Created for Mandriva Linux packaging by Anssi Hannula <anssi@mandriva.org>.
+
+
+Index: channelscan-0.1.0/Makefile
+===================================================================
+--- channelscan-0.1.0/Makefile
++++ channelscan-0.1.0/Makefile	2008-04-22 18:29:26.000000000 +0300
+@@ -48,7 +48,7 @@
+ 
+ ### The object files (add further files here):
+ 
+-OBJS = $(PLUGIN).o i18n.o transponders.o filter.o
++OBJS = $(PLUGIN).o  transponders.o filter.o
+ 
+ ### Implicit rules:
+ 
+@@ -64,9 +64,34 @@
+ 
+ -include $(DEPFILE)
+ 
++### Internationalization (I18N):
++
++PODIR     = po
++LOCALEDIR = $(VDRDIR)/locale
++I18Npo    = $(wildcard $(PODIR)/*.po)
++I18Nmsgs  = $(addprefix $(LOCALEDIR)/, $(addsuffix /LC_MESSAGES/vdr-$(PLUGIN).mo, $(notdir $(foreach file, $(I18Npo), $(basename $(file))))))
++I18Npot   = $(PODIR)/$(PLUGIN).pot
++
++%.mo: %.po
++	msgfmt -c -o $@ $<
++
++$(I18Npot): $(wildcard *.[ch] *.[ch]xx *.cc *.[ch]pp *.hh)
++	xgettext -C -cTRANSLATORS --no-wrap --no-location -k -ktr -ktrNOOP --msgid-bugs-address='<http://qa.mandriva.com/>' -o $@ $^
++
++%.po: $(I18Npot)
++	msgmerge -U --no-wrap --no-location --backup=none -q $@ $<
++	@touch $@
++
++$(I18Nmsgs): $(LOCALEDIR)/%/LC_MESSAGES/vdr-$(PLUGIN).mo: $(PODIR)/%.mo
++	@mkdir -p $(dir $@)
++	cp $< $@
++
++.PHONY: i18n
++i18n: $(I18Nmsgs)
++
+ ### Targets:
+ 
+-all: libvdr-$(PLUGIN).so
++all: libvdr-$(PLUGIN).so i18n
+ 
+ libvdr-$(PLUGIN).so: $(OBJS)
+ 	$(CXX) $(CXXFLAGS) -shared $(OBJS) -o $@
+@@ -81,4 +106,5 @@
+ 	@echo Distribution package created as $(PACKAGE).tgz
+ 
+ clean:
++	@-rm -f $(PODIR)/*.mo $(PODIR)/*.pot
+ 	@-rm -f $(OBJS) $(DEPFILE) *.so *.tgz core* *~
+Index: channelscan-0.1.0/channelscan.c
+===================================================================
+--- channelscan-0.1.0/channelscan.c
++++ channelscan-0.1.0/channelscan.c	2008-04-22 18:29:26.000000000 +0300
+@@ -17,14 +17,14 @@
+ #include <math.h>
+ 
+ #include "filter.h"
+-#include "i18n.h"
++
+ #include "transponders.h"
+ 
+ #define DEV_DVB_FRONTEND "frontend"
+ 
+ static const char *VERSION        = "0.1.0";
+-static const char *DESCRIPTION    = "Plugin for satelite scan";
+-static const char *MAINMENUENTRY  = "Channelscan";
++static const char *DESCRIPTION    = trNOOP("Plugin for satelite scan");
++static const char *MAINMENUENTRY  = trNOOP("Channelscan");
+ 
+ 
+ // --- cSetupMenu ------------------------------------------------------
+@@ -529,7 +529,7 @@
+ 
+ bool cPluginChannelscan::Start(void) {
+   // Start any background activities the plugin shall perform.
+-  RegisterI18n(Phrases);
++  
+   return true;
+ }
+ 
+Index: channelscan-0.1.0/i18n.c
+===================================================================
+--- channelscan-0.1.0/i18n.c
++++ channelscan-0.1.0/i18n.c	2008-04-22 18:29:26.000000000 +0300
+@@ -1,284 +0,0 @@
+-/*
+- * i18n.c: Internationalization
+- *
+- * See the README file for copyright information and how to reach the author.
+- *
+- * $Id:
+- */
+-
+-#include "i18n.h"
+-
+- const tI18nPhrase Phrases[] = {
+-  { "Plugin for satelite scan", //EN
+-    "Plugin fќr Kanalsuche",// DE
+-    "",
+-    "Plugin per la scansione canali",// IT
+-    "",
+-    "",
+-    "",
+-    "",
+-    "Kanavahaku satelliiteille",// FI
+-    "",
+-    "",
+-    "",
+-    "",
+-    "",
+-    "",
+-    "",
+-    "Сканирование спутников",
+-  },
+-  { "Channelscan", //EN
+-    "Kanalsuche",// DE
+-    "",
+-    "Scansione canali",// IT
+-    "",
+-    "",
+-    "",
+-    "",
+-    "Kanavahaku",// FI
+-    "",
+-    "",
+-    "",
+-    "",
+-    "",
+-    "",
+-    "",
+-    "Поиск каналов",
+-  },
+-  { "Transponder:",
+-    "Transponder:",
+-    "",
+-    "Transponder:",
+-    "",
+-    "",
+-    "",
+-    "",
+-    "Transponderi:",
+-    "",
+-    "",
+-    "",
+-    "",
+-    "",
+-    "",
+-    "",
+-    "Транспондер:",
+-  },
+-  { "Current file:",
+-    "Datei:",
+-    "",
+-    "File corrente:",
+-    "",
+-    "",
+-    "",
+-    "",
+-    "Tiedosto:",
+-    "",
+-    "",
+-    "",
+-    "",
+-    "",
+-    "",
+-    "",
+-    "Выбран файл:",
+-  },
+-  { "Sat name:",
+-    "Sat-Name:",
+-    "",
+-    "Nome sat:",
+-    "",
+-    "",
+-    "",
+-    "",
+-    "Satelliitti:",
+-    "",
+-    "",
+-    "",
+-    "",
+-    "",
+-    "",
+-    "",
+-    "Спутник:",
+-  },
+-  { "Symbolrate:",
+-    "Symbolrate:",
+-    "",
+-    "Symbolrate:",
+-    "",
+-    "",
+-    "",
+-    "",
+-    "Symbolinop:",
+-    "",
+-    "",
+-    "",
+-    "",
+-    "",
+-    "",
+-    "",
+-    "Симв.скорость:",
+-  },
+-  { "Frequency:",
+-    "Frequenz:",
+-    "",
+-    "Frequenza:",
+-    "",
+-    "",
+-    "",
+-    "",
+-    "Taajuus:",
+-    "",
+-    "",
+-    "",
+-    "",
+-    "",
+-    "",
+-    "",
+-    "Частота:",
+-  },
+-  { "Polarization:",
+-    "Polarisation:",
+-    "",
+-    "Polarizzazione:",
+-    "",
+-    "",
+-    "",
+-    "",
+-    "Polarisaatio:",
+-    "",
+-    "",
+-    "",
+-    "",
+-    "",
+-    "",
+-    "",
+-    "Поляризация:",
+-  },
+-  { "dB",
+-    "dB",
+-    "",
+-    "dB",
+-    "",
+-    "",
+-    "",
+-    "",
+-    "dB",
+-    "",
+-    "",
+-    "",
+-    "",
+-    "",
+-    "",
+-    "",
+-    "дБ",
+-  },
+-  { "dBm",
+-    "dBm",
+-    "",
+-    "dBm",
+-    "",
+-    "",
+-    "",
+-    "",
+-    "dBm",
+-    "",
+-    "",
+-    "",
+-    "",
+-    "",
+-    "",
+-    "",
+-    "дБм",
+-  },
+-  { "Radio only",
+-    "nur Radio",
+-    "",
+-    "Solo radio",
+-    "",
+-    "",
+-    "",
+-    "",
+-    "radio",
+-    "",
+-    "",
+-    "",
+-    "",
+-    "",
+-    "",
+-    "",
+-    "",
+-  },
+-  { "TV only",
+-    "nur TV",
+-    "",
+-    "Solo TV",
+-    "",
+-    "",
+-    "",
+-    "",
+-    "TV",
+-    "",
+-    "",
+-    "",
+-    "",
+-    "",
+-    "",
+-    "",
+-    "",
+-  },
+-  { "Radio + TV",
+-    "Radio + TV",
+-    "",
+-    "",
+-    "Radio + TV",
+-    "",
+-    "",
+-    "",
+-    "radio + TV",
+-    "",
+-    "",
+-    "",
+-    "",
+-    "",
+-    "",
+-    "",
+-    "",
+-  },
+-  { "Radio + TV + NVOD",
+-    "Radio + TV + NVOD",
+-    "",
+-    "Radio + TV + NVOD",
+-    "",
+-    "",
+-    "",
+-    "",
+-    "radio + TV + NVOD",
+-    "",
+-    "",
+-    "",
+-    "",
+-    "",
+-    "",
+-    "",
+-    "",
+-  },
+-  { "Service Type",
+-    "Service Arten",
+-    "",
+-    "Tipo servizio",
+-    "",
+-    "",
+-    "",
+-    "",
+-    "Haettavat palvelut",
+-    "",
+-    "",
+-    "",
+-    "",
+-    "",
+-    "",
+-    "",
+-    "",
+-  },
+-  { NULL }
+-  };
+-
+Index: channelscan-0.1.0/i18n.h
+===================================================================
+--- channelscan-0.1.0/i18n.h
++++ channelscan-0.1.0/i18n.h	2008-04-22 18:29:26.000000000 +0300
+@@ -1,17 +0,0 @@
+-/*
+- * i18n.h: Internationalization
+- *
+- * See the README file for copyright information and how to reach the author.
+- *
+- * $Id: i18n.h 1.2 2002/05/11 14:48:16 kls Exp $
+- */
+-
+-#ifndef _I18N__H
+-#define _I18N__H
+-
+-#include <vdr/i18n.h>
+-#include <vdr/config.h>
+-
+-extern const tI18nPhrase Phrases[];
+-
+-#endif //_I18N__H
+Index: channelscan-0.1.0/po/channelscan.pot
+===================================================================
+--- channelscan-0.1.0/po/channelscan.pot
++++ channelscan-0.1.0/po/channelscan.pot	2008-04-22 18:29:26.000000000 +0300
+@@ -0,0 +1,69 @@
++# SOME DESCRIPTIVE TITLE.
++# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
++# This file is distributed under the same license as the PACKAGE package.
++# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
++#
++#, fuzzy
++msgid ""
++msgstr ""
++"Project-Id-Version: PACKAGE VERSION\n"
++"Report-Msgid-Bugs-To: http://qa.mandriva.com/\n"
++"POT-Creation-Date: 2008-04-22 18:29+0300\n"
++"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
++"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
++"Language-Team: LANGUAGE <LL@li.org>\n"
++"MIME-Version: 1.0\n"
++"Content-Type: text/plain; charset=CHARSET\n"
++"Content-Transfer-Encoding: 8bit\n"
++
++#: channelscan.c:26
++msgid "Plugin for satelite scan"
++msgstr ""
++
++#: channelscan.c:27
++msgid "Channelscan"
++msgstr ""
++
++#: channelscan.c:45
++msgid "Radio only"
++msgstr ""
++
++#: channelscan.c:46
++msgid "TV only"
++msgstr ""
++
++#: channelscan.c:47
++msgid "Radio + TV"
++msgstr ""
++
++#: channelscan.c:48
++msgid "Radio + TV + NVOD"
++msgstr ""
++
++#: channelscan.c:49
++msgid "Service Type"
++msgstr ""
++
++#: channelscan.c:391
++msgid "Sat name:"
++msgstr ""
++
++#: channelscan.c:396
++msgid "Transponder:"
++msgstr ""
++
++#: channelscan.c:407
++msgid "Current file:"
++msgstr ""
++
++#: channelscan.c:442
++msgid "Frequency:"
++msgstr ""
++
++#: channelscan.c:447
++msgid "Polarization:"
++msgstr ""
++
++#: channelscan.c:452
++msgid "Symbolrate:"
++msgstr ""
+Index: channelscan-0.1.0/po/de_DE.po
+===================================================================
+--- channelscan-0.1.0/po/de_DE.po
++++ channelscan-0.1.0/po/de_DE.po	2008-04-22 18:29:26.000000000 +0300
+@@ -0,0 +1,68 @@
++# VDR channelscan plugin language source file.
++# Copyright (C) YEAR THE VDR-channelscan'S COPYRIGHT HOLDER
++# This file is distributed under the same license as the VDR-channelscan package.
++# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
++#
++msgid ""
++msgstr ""
++"Project-Id-Version: VDR-channelscan\n"
++"Report-Msgid-Bugs-To: http://qa.mandriva.com/\n"
++"POT-Creation-Date: 2008-04-22 18:29+0300\n"
++"PO-Revision-Date: 2008-04-22 18:29+0300\n"
++"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
++"Language-Team: <vdr@linuxtv.org>\n"
++"MIME-Version: 1.0\n"
++"Content-Type: text/plain; charset=ISO-8859-15\n"
++"Content-Transfer-Encoding: 8bit\n"
++
++#: channelscan.c:26
++msgid "Plugin for satelite scan"
++msgstr "Plugin fќr Kanalsuche"
++
++#: channelscan.c:27
++msgid "Channelscan"
++msgstr "Kanalsuche"
++
++#: channelscan.c:45
++msgid "Radio only"
++msgstr "nur Radio"
++
++#: channelscan.c:46
++msgid "TV only"
++msgstr "nur TV"
++
++#: channelscan.c:47
++msgid "Radio + TV"
++msgstr "Radio + TV"
++
++#: channelscan.c:48
++msgid "Radio + TV + NVOD"
++msgstr "Radio + TV + NVOD"
++
++#: channelscan.c:49
++msgid "Service Type"
++msgstr "Service Arten"
++
++#: channelscan.c:391
++msgid "Sat name:"
++msgstr "Sat-Name:"
++
++#: channelscan.c:396
++msgid "Transponder:"
++msgstr "Transponder:"
++
++#: channelscan.c:407
++msgid "Current file:"
++msgstr "Datei:"
++
++#: channelscan.c:442
++msgid "Frequency:"
++msgstr "Frequenz:"
++
++#: channelscan.c:447
++msgid "Polarization:"
++msgstr "Polarisation:"
++
++#: channelscan.c:452
++msgid "Symbolrate:"
++msgstr "Symbolrate:"
+Index: channelscan-0.1.0/po/fi_FI.po
+===================================================================
+--- channelscan-0.1.0/po/fi_FI.po
++++ channelscan-0.1.0/po/fi_FI.po	2008-04-22 18:29:26.000000000 +0300
+@@ -0,0 +1,68 @@
++# VDR channelscan plugin language source file.
++# Copyright (C) YEAR THE VDR-channelscan'S COPYRIGHT HOLDER
++# This file is distributed under the same license as the VDR-channelscan package.
++# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
++#
++msgid ""
++msgstr ""
++"Project-Id-Version: VDR-channelscan\n"
++"Report-Msgid-Bugs-To: http://qa.mandriva.com/\n"
++"POT-Creation-Date: 2008-04-22 18:29+0300\n"
++"PO-Revision-Date: 2008-04-22 18:29+0300\n"
++"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
++"Language-Team: <vdr@linuxtv.org>\n"
++"MIME-Version: 1.0\n"
++"Content-Type: text/plain; charset=ISO-8859-15\n"
++"Content-Transfer-Encoding: 8bit\n"
++
++#: channelscan.c:26
++msgid "Plugin for satelite scan"
++msgstr "Kanavahaku satelliiteille"
++
++#: channelscan.c:27
++msgid "Channelscan"
++msgstr "Kanavahaku"
++
++#: channelscan.c:45
++msgid "Radio only"
++msgstr "radio"
++
++#: channelscan.c:46
++msgid "TV only"
++msgstr "TV"
++
++#: channelscan.c:47
++msgid "Radio + TV"
++msgstr "radio + TV"
++
++#: channelscan.c:48
++msgid "Radio + TV + NVOD"
++msgstr "radio + TV + NVOD"
++
++#: channelscan.c:49
++msgid "Service Type"
++msgstr "Haettavat palvelut"
++
++#: channelscan.c:391
++msgid "Sat name:"
++msgstr "Satelliitti:"
++
++#: channelscan.c:396
++msgid "Transponder:"
++msgstr "Transponderi:"
++
++#: channelscan.c:407
++msgid "Current file:"
++msgstr "Tiedosto:"
++
++#: channelscan.c:442
++msgid "Frequency:"
++msgstr "Taajuus:"
++
++#: channelscan.c:447
++msgid "Polarization:"
++msgstr "Polarisaatio:"
++
++#: channelscan.c:452
++msgid "Symbolrate:"
++msgstr "Symbolinop:"
+Index: channelscan-0.1.0/po/it_IT.po
+===================================================================
+--- channelscan-0.1.0/po/it_IT.po
++++ channelscan-0.1.0/po/it_IT.po	2008-04-22 18:29:26.000000000 +0300
+@@ -0,0 +1,68 @@
++# VDR channelscan plugin language source file.
++# Copyright (C) YEAR THE VDR-channelscan'S COPYRIGHT HOLDER
++# This file is distributed under the same license as the VDR-channelscan package.
++# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
++#
++msgid ""
++msgstr ""
++"Project-Id-Version: VDR-channelscan\n"
++"Report-Msgid-Bugs-To: http://qa.mandriva.com/\n"
++"POT-Creation-Date: 2008-04-22 18:29+0300\n"
++"PO-Revision-Date: 2008-04-22 18:29+0300\n"
++"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
++"Language-Team: <vdr@linuxtv.org>\n"
++"MIME-Version: 1.0\n"
++"Content-Type: text/plain; charset=ISO-8859-15\n"
++"Content-Transfer-Encoding: 8bit\n"
++
++#: channelscan.c:26
++msgid "Plugin for satelite scan"
++msgstr "Plugin per la scansione canali"
++
++#: channelscan.c:27
++msgid "Channelscan"
++msgstr "Scansione canali"
++
++#: channelscan.c:45
++msgid "Radio only"
++msgstr "Solo radio"
++
++#: channelscan.c:46
++msgid "TV only"
++msgstr "Solo TV"
++
++#: channelscan.c:47
++msgid "Radio + TV"
++msgstr ""
++
++#: channelscan.c:48
++msgid "Radio + TV + NVOD"
++msgstr "Radio + TV + NVOD"
++
++#: channelscan.c:49
++msgid "Service Type"
++msgstr "Tipo servizio"
++
++#: channelscan.c:391
++msgid "Sat name:"
++msgstr "Nome sat:"
++
++#: channelscan.c:396
++msgid "Transponder:"
++msgstr "Transponder:"
++
++#: channelscan.c:407
++msgid "Current file:"
++msgstr "File corrente:"
++
++#: channelscan.c:442
++msgid "Frequency:"
++msgstr "Frequenza:"
++
++#: channelscan.c:447
++msgid "Polarization:"
++msgstr "Polarizzazione:"
++
++#: channelscan.c:452
++msgid "Symbolrate:"
++msgstr "Symbolrate:"
+Index: channelscan-0.1.0/po/nl_NL.po
+===================================================================
+--- channelscan-0.1.0/po/nl_NL.po
++++ channelscan-0.1.0/po/nl_NL.po	2008-04-22 18:29:26.000000000 +0300
+@@ -0,0 +1,68 @@
++# VDR channelscan plugin language source file.
++# Copyright (C) YEAR THE VDR-channelscan'S COPYRIGHT HOLDER
++# This file is distributed under the same license as the VDR-channelscan package.
++# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
++#
++msgid ""
++msgstr ""
++"Project-Id-Version: VDR-channelscan\n"
++"Report-Msgid-Bugs-To: http://qa.mandriva.com/\n"
++"POT-Creation-Date: 2008-04-22 18:29+0300\n"
++"PO-Revision-Date: 2008-04-22 18:29+0300\n"
++"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
++"Language-Team: <vdr@linuxtv.org>\n"
++"MIME-Version: 1.0\n"
++"Content-Type: text/plain; charset=ISO-8859-15\n"
++"Content-Transfer-Encoding: 8bit\n"
++
++#: channelscan.c:26
++msgid "Plugin for satelite scan"
++msgstr ""
++
++#: channelscan.c:27
++msgid "Channelscan"
++msgstr ""
++
++#: channelscan.c:45
++msgid "Radio only"
++msgstr ""
++
++#: channelscan.c:46
++msgid "TV only"
++msgstr ""
++
++#: channelscan.c:47
++msgid "Radio + TV"
++msgstr "Radio + TV"
++
++#: channelscan.c:48
++msgid "Radio + TV + NVOD"
++msgstr ""
++
++#: channelscan.c:49
++msgid "Service Type"
++msgstr ""
++
++#: channelscan.c:391
++msgid "Sat name:"
++msgstr ""
++
++#: channelscan.c:396
++msgid "Transponder:"
++msgstr ""
++
++#: channelscan.c:407
++msgid "Current file:"
++msgstr ""
++
++#: channelscan.c:442
++msgid "Frequency:"
++msgstr ""
++
++#: channelscan.c:447
++msgid "Polarization:"
++msgstr ""
++
++#: channelscan.c:452
++msgid "Symbolrate:"
++msgstr ""

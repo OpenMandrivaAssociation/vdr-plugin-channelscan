@@ -1,0 +1,31 @@
+Index: channelscan-0.1.0/channelscan.c
+===================================================================
+--- channelscan-0.1.0/channelscan.c
++++ channelscan-0.1.0/channelscan.c	2009-03-21 10:28:34.000000000 +0200
+@@ -390,7 +390,7 @@
+ 		// Sat name
+ 		sprintf(cTemp, tr("Sat name:"));
+ 		osd->DrawText(10,iTop,cTemp,clrWhite,clrBackwindow,cFont::GetFont(fontOsd));
+-		sprintf(cTemp, cSatName);
++		sprintf(cTemp, "%s", cSatName);
+ 		osd->DrawText(130,iTop,cTemp,clrWhite,clrBackwindow,cFont::GetFont(fontOsd));
+ 		// Transpoders state
+ 		sprintf(cTemp, tr("Transponder:"));
+@@ -441,7 +441,7 @@
+ 		// Frequency
+ 		sprintf(cTemp, tr("Frequency:"));
+ 		osd->DrawText(10,iTop,cTemp,clrWhite,clrBackwindow,cFont::GetFont(fontOsd));
+-		sprintf(cTemp, itoa(Frequenz));
++		sprintf(cTemp, "%s", itoa(Frequenz));
+ 		osd->DrawText(130,iTop,cTemp,clrWhite,clrBackwindow,cFont::GetFont(fontOsd));
+ 		// Polari
+ 		sprintf(cTemp, tr("Polarization:"));
+@@ -451,7 +451,7 @@
+ 		// Symbolrate
+ 		sprintf(cTemp, tr("Symbolrate:"));
+ 		osd->DrawText(410,iTop,cTemp,clrWhite,clrBackwindow,cFont::GetFont(fontOsd));		
+-		sprintf(cTemp, itoa(Symbolrate));
++		sprintf(cTemp, "%s", itoa(Symbolrate));
+ 		osd->DrawText(540,iTop,cTemp,clrWhite,clrBackwindow,cFont::GetFont(fontOsd));		
+         osd->Flush();
+ 	} else {
