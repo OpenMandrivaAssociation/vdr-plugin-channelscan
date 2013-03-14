@@ -1,13 +1,9 @@
-
 %define plugin	channelscan
-%define name	vdr-plugin-%plugin
-%define version	0.1.0
-%define rel	17
 
 Summary:	VDR plugin: Plugin for satellite scan
-Name:		%name
-Version:	%version
-Release:	%mkrel %rel
+Name:		vdr-plugin-%plugin
+Version:	0.1.0
+Release:	18
 Group:		Video
 License:	GPL
 URL:		http://kikko77.altervista.org/
@@ -19,7 +15,6 @@ Patch4:		channelscan-format-string.patch
 Patch5:		channelscan-includes.patch
 # warning: cannot pass objects of non-POD type ‘class cString’ through ‘...’; call will abort at runtime
 Patch6:		channelscan-non-pod-type.patch
-BuildRoot:	%{_tmppath}/%{name}-buildroot
 BuildRequires:	vdr-devel >= 1.6.0
 Requires:	vdr-abi = %vdr_abi
 
@@ -42,7 +37,6 @@ from a .ini file and then scan this sat to get a channel list.
 %vdr_plugin_build
 
 %install
-rm -rf %{buildroot}
 %vdr_plugin_install
 
 install -d -m755 %{buildroot}%{_vdr_plugin_datadir}/%{plugin}
@@ -50,15 +44,6 @@ install -m644 transponders/* %{buildroot}%{_vdr_plugin_datadir}/%{plugin}
 
 install -d -m755 %{buildroot}%{_vdr_plugin_cfgdir}
 ln -s %{_vdr_plugin_datadir}/%{plugin} %{buildroot}%{_vdr_plugin_cfgdir}/transponders
-
-%clean
-rm -rf %{buildroot}
-
-%post
-%vdr_plugin_post %plugin
-
-%postun
-%vdr_plugin_postun %plugin
 
 %files -f %plugin.vdr
 %defattr(-,root,root)
