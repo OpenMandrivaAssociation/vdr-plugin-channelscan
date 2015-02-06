@@ -3,7 +3,7 @@
 Summary:	VDR plugin: Plugin for satellite scan
 Name:		vdr-plugin-%plugin
 Version:	0.1.0
-Release:	18
+Release:	19
 Group:		Video
 License:	GPL
 URL:		http://kikko77.altervista.org/
