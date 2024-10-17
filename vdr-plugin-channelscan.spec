@@ -6,7 +6,7 @@ Version:	0.1.0
 Release:	20
 Group:		Video
 License:	GPL
-URL:		http://kikko77.altervista.org/
+URL:		https://kikko77.altervista.org/
 Source:		vdr-%plugin-%version.tar.bz2
 Patch1:		channelscan-extra-qualification.patch
 Patch2:		90_channelscan-0.1.0-1.5.10.dpatch
